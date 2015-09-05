@@ -5,8 +5,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <readline/readline.h>
 
 #define DELIM_CHARS " \t\n"
+#define ABNORMAL_EXIT 3
+//#define DEBUG
 
 int i, ERR_FLG = 0, token_cnt = 0, PWD_SIZ = 512;
 int STDIN_CPY, STDOUT_CPY;
@@ -28,6 +31,7 @@ int shell_cd(char **args) {
 	if(chdir(args[1]) == -1)
 		perror("");
 	getcwd(pwd, PWD_SIZ);
+	strcat(pwd, "> ");
 }
 
 int shell_exit(char **args) {
@@ -53,7 +57,7 @@ int builtin_cnt() {
 void preprocess(char ***tokens) {
 	//Preprocess for things like IO redirection and Background execution
 
-	char **new_tokens = (char**) malloc(sizeof(*tokens));
+	char **new_tokens = (char**) malloc((sizeof(*tokens) + 1) * sizeof(char*));
 	char **old_tokens = *tokens;
 	int n = 0;
 
@@ -62,8 +66,15 @@ void preprocess(char ***tokens) {
 			char *fname = (i+1 < token_cnt)?old_tokens[++i]:NULL;
 			int OUT_FD = open(fname, O_WRONLY|O_CREAT);
 
+			#ifdef DEBUG
+				printf("Attempting to redirect output to %s\n", fname);
+			#endif
+
 			if(OUT_FD == -1 || dup2(OUT_FD, STDOUT_FILENO) == -1) {
 				perror("");
+				#ifdef DEBUG
+					printf("Failed.\n");
+				#endif
 				ERR_FLG = 1;
 				return;
 			}
@@ -72,8 +83,15 @@ void preprocess(char ***tokens) {
 			char *fname = (i+1 < token_cnt)?old_tokens[++i]:NULL;
 			int IN_FD = open(fname, O_RDONLY);
 
+			#ifdef DEBUG
+				printf("Attempting to redirect input to %s\n", fname);
+			#endif
+
 			if(IN_FD == -1 || dup2(IN_FD, STDIN_FILENO) == -1) {
 				perror("");
+				#ifdef DEBUG
+					printf("Failed.\n");
+				#endif
 				ERR_FLG = 1;
 				return;
 			}
@@ -86,6 +104,7 @@ void preprocess(char ***tokens) {
 
 	*tokens = new_tokens;
 	token_cnt = n;
+	(*tokens)[token_cnt] = NULL;
 	return;
 }
 
@@ -101,6 +120,13 @@ char **parse(char *line) {
 		tokens[token_cnt++] = token;
 		token = strtok(NULL, DELIM_CHARS);
 	}
+
+	#ifdef DEBUG
+		printf("tokens are: ");
+		for (i = 0; i < token_cnt; ++i)
+			printf("%s,", tokens[i]);
+		printf("\n");
+	#endif
 	
 	return tokens;
 }
@@ -135,13 +161,34 @@ void shellExecute(char **tokens) {
 			strcat(path, tokens[0]);
 
 			if(stat(path, &check) != -1) {
+
+				#ifdef DEBUG
+					printf("Valid path found: %s\n", path);
+				#endif
+
 				pid_t pid = fork();
 				valid = 1;
-				if(pid == 0) { //child
-					execv(path, tokens);
 
+				if(pid == 0) { //child
+					#ifdef DEBUG
+						printf("Inside child process for: %s\n", tokens[0]);
+						printf("argv[] = { ");
+						i = 0; while(tokens[i] != NULL) printf("%s ", tokens[i++]);
+						printf("}\n");
+					#endif
+					if(execv(path, tokens) == -1) {
+						perror("execv()");
+						exit(ABNORMAL_EXIT);
+					}
 				} else if(pid != -1) { //parent
 					wait(pid);
+					#ifdef DEBUG
+						printf("%s: Child has died.\n", tokens[0]);
+					#endif
+					return;
+				} else {
+					perror("fork()");
+					return;
 				}
 			}
 			tmp = strtok(NULL, ":");
@@ -163,16 +210,19 @@ void runShell() {
 
 	size_t line_siz = 0;
 	pwd = (char*) malloc(sizeof(char) * PWD_SIZ);
+	getcwd(pwd, PWD_SIZ);
+	strcat(pwd, "> ");
 
 	shell_clear(NULL);
 
 	while(1) {
 		//Reset
 		reset();
-		getcwd(pwd, PWD_SIZ);
-		printf("%s> ", pwd);
 		//Get line from user
-		getline(&line, &line_siz, stdin);
+		line = readline(pwd);
+		#ifdef DEBUG
+			printf("line is '%s'\n", line);
+		#endif
 		//Parse line
 		tokens = parse(line);
 		preprocess(&tokens);
