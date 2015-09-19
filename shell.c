@@ -64,7 +64,7 @@ void preprocess(char ***tokens) {
 	for(i = 0 ; i<token_cnt ; i++) {
 		if(!strcmp(old_tokens[i], ">")) { //redirect o/p stream to file
 			char *fname = (i+1 < token_cnt)?old_tokens[++i]:NULL;
-			int OUT_FD = open(fname, O_WRONLY|O_CREAT);
+			int OUT_FD = open(fname, O_WRONLY|O_CREAT, 0666);
 
 			#ifdef DEBUG
 				printf("Attempting to redirect output to %s\n", fname);
@@ -145,6 +145,20 @@ void shellExecute(char **tokens) {
 	}
 	if(!flg) {
 		//Not built-in command
+
+		if(!strncmp("./", tokens[0], 2)) { //Search in current directory
+			pid_t pid = fork();
+
+			if(pid == 0) {
+				if(execv(tokens[0], tokens) == -1) {
+					perror("execv()");
+					exit(0);
+				}
+			} else {
+				wait(pid);
+				return;
+			}
+		}
 
 		char *ENV_PATH_CPY = (char*) malloc(strlen(ENV_PATH) * sizeof(char));
 		strcpy(ENV_PATH_CPY, ENV_PATH);
