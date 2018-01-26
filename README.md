@@ -6,7 +6,7 @@ A "from-scratch" implementation of a Bash-like shell.
 - Implementation of shell in-built commands (like cd)
 - Supports input/output redirection (using '<' and '>' syntax) like in Bash
 - uses the GNU readline library to provide features of auto-completion
-- Can exec arbiraty executables inside the shell Eg; (./a.out)
+- Can exec arbitrary executables inside the shell Eg; (./a.out)
 
 ### ls.c
 
