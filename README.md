@@ -28,7 +28,7 @@ remove - removes file by using the unlink() system call. rmv2.c can remove direc
 
 ### kill.c
 
-send a signal to a process. Default signal is SIGINT.
+send a signal to a process by pid. Default signal is SIGKILL.
 
 ### wc.c
 
