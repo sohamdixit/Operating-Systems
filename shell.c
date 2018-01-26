@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <readline/readline.h>
 
 #define DELIM_CHARS " \t\n"
@@ -96,7 +97,7 @@ void preprocess(char ***tokens) {
 				return;
 			}
 		} else if(!strcmp(old_tokens[i], "&")) { //Process is to be executed in background
-			
+
 		} else { //The token is an argument for a process
 			new_tokens[n++] = old_tokens[i];
 		}
@@ -127,7 +128,7 @@ char **parse(char *line) {
 			printf("%s,", tokens[i]);
 		printf("\n");
 	#endif
-	
+
 	return tokens;
 }
 
@@ -155,7 +156,8 @@ void shellExecute(char **tokens) {
 					exit(0);
 				}
 			} else {
-				wait(pid);
+				int status;
+				waitpid(pid, &status, 0);
 				return;
 			}
 		}
@@ -168,7 +170,7 @@ void shellExecute(char **tokens) {
 		int valid = 0;
 
 		while(tmp) {
-		
+
 			char *path = (char*) malloc(strlen(tmp)+strlen(tokens[0])+2);
 			strcpy(path, tmp);
 			strcat(path, "/");
@@ -195,7 +197,8 @@ void shellExecute(char **tokens) {
 						exit(ABNORMAL_EXIT);
 					}
 				} else if(pid != -1) { //parent
-					wait(pid);
+					int status;
+					waitpid(pid, &status, 0);
 					#ifdef DEBUG
 						printf("%s: Child has died.\n", tokens[0]);
 					#endif
@@ -245,7 +248,7 @@ void runShell() {
 }
 
 int main() {
-	
+
 	ENV_PATH = getenv("PATH");
 	STDIN_CPY = dup(0);
 	STDOUT_CPY = dup(1);

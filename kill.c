@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc , char *argv[])
 {
@@ -13,7 +14,7 @@ int main(int argc , char *argv[])
 		if(argv[i][0] == '-') SIG = atoi(&argv[i][1]);
 		else pid[n++] = (pid_t) atoi(argv[i]);
 	}
-	
+
 	for(i = 0 ; i<n ; i++) {
 		if(SIG == -1) {
 			if(kill(pid[i], SIGKILL) == -1)

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <unistd.h>
 
 void remove_util(char *);
 
@@ -22,14 +23,14 @@ void del(char *path) {
 		//Directory
 		DIR *dp = opendir(path);
 		struct dirent *entry = NULL;
-		
+
 		//Recur for contents of directory
 		while(((entry = readdir(dp)) != NULL) && strcmp(".",entry->d_name) && strcmp("..",entry->d_name)) {
 			strcat(path, entry->d_name);
 			del(path);
 			strcpy(path, p2);
 		}
-		
+
 		//remove the directory itself
 		remove_util(path);
 
@@ -52,10 +53,10 @@ void remove_util(char *path) {
 }
 
 int main(int argc , char *argv[]) {
-	
+
 	int n = 0;
 	char *path[16];
-	
+
 	int i;
 	for(i = 1 ; i<argc ; i++)
 	{
@@ -70,7 +71,7 @@ int main(int argc , char *argv[]) {
 		printf("No file(s) specified!\n");
 		exit(2);
 	}
-	
+
 	int j;
 	for(j = 0 ; j<n ; j++)  {
 		del(path[j]);

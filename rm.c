@@ -2,13 +2,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 int main(int argc , char *argv[]) {
-	
+
 	bool FLG_PROMPT = false;
 	int n = 0;
 	char *path[16], response;
-	
+
 	int i;
 	for(i = 1 ; i<argc ; i++)
 	{
@@ -23,9 +24,9 @@ int main(int argc , char *argv[]) {
 		printf("No file(s) specified!\n");
 		exit(2);
 	}
-	
+
 	int j;
-	for(j = 0 ; j<n ; j++) 
+	for(j = 0 ; j<n ; j++)
 	{
 		response = 'n';
 		if(FLG_PROMPT)
