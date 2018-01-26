@@ -34,7 +34,7 @@ Word Count - Counts number of lines/words/characters in a file.
 
 ### Compilation
 
-The [GNU make] (https://www.gnu.org/software/make/) utility can be used to compile these .c files. The Makefile provided includes goals to compile each program or all at once.
+The [GNU make](https://www.gnu.org/software/make/) utility can be used to compile these .c files. The Makefile provided includes goals to compile each program individually or all of them at once.
 
 Eg: To compile shell.c into an executable -
 ```
