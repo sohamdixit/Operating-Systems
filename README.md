@@ -5,7 +5,7 @@ From-scratch implementations of an assortment of Unix programs. Written in C. No
 An implementation of a Bash-like shell.
 - Implementation of shell in-built commands (like cd)
 - Supports input/output redirection (using '<' and '>' syntax) like in Bash
-- uses the GNU readline library to provide features of auto-completion
+- Uses the [GNU readline library](https://tiswww.case.edu/php/chet/readline/rltop.html) to provide features of auto-completion
 - Can exec arbitrary executables inside the shell Eg; (./a.out)
 
 #### Possible improvements -
