@@ -1,4 +1,4 @@
-From-scratch implementations of an assortment of Unix programs. Written in C. Note that these are college-assignement level, minimal implementations, mainly for demonstrating how these utilites are implemented in Unix. Please DO NOT expect them to conform to POSIX standards.
+From-scratch implementations of an assortment of Unix programs. Written in C. Note that these are college-assignment level, minimal implementations, mainly for demonstrating how these utilites are implemented in Unix. Please DO NOT expect them to conform to POSIX standards.
 
 ### shell.c
 
@@ -10,4 +10,4 @@ A "from-scratch" implementation of a Bash-like shell.
 
 ### ls.c
 
-Implementation of list
+Implementation of list (ls) with support for the flags -l, -a, -R
