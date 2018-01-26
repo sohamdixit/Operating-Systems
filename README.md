@@ -2,7 +2,7 @@ From-scratch implementations of an assortment of Unix programs. Written in C. No
 
 ### shell.c
 
-A "from-scratch" implementation of a Bash-like shell.
+An implementation of a Bash-like shell.
 - Implementation of shell in-built commands (like cd)
 - Supports input/output redirection (using '<' and '>' syntax) like in Bash
 - uses the GNU readline library to provide features of auto-completion
