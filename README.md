@@ -8,6 +8,47 @@ An implementation of a Bash-like shell.
 - uses the GNU readline library to provide features of auto-completion
 - Can exec arbitrary executables inside the shell Eg; (./a.out)
 
+#### Possible improvements -
+- Add support for piping (|)
+- Add support for running background processes (&)
+
 ### ls.c
 
 Implementation of list (ls) with support for the flags -l, -a, -R
+
+### ps.c
+
+Basic 'ps' implementation that reads the /proc/ directory and displays the processes in running (R) state.
+
+### rm.c
+
+remove - removes file by using the unlink() system call. rmv2.c can remove directories recursively.
+
+### kill.c
+
+send a signal to a process. Default signal is SIGINT.
+
+### wc.c
+
+Word Count - Counts number of lines/words/characters in a file.
+
+### Compilation
+
+The [GNU make] (https://www.gnu.org/software/make/) utility can be used to compile these .c files. The Makefile provided includes goals to compile each program or all at once.
+
+Eg: To compile shell.c into an executable -
+```
+make shell
+```
+
+To compile all programs at once simply -
+
+```
+make
+```
+
+To cleanup created executables -
+
+```
+make clean
+```
